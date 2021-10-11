@@ -48,7 +48,7 @@ public class Environement {
     public boolean succes(){
         for (Stack pile : table){
             if (pile.size()==nbBloc){
-                for (int i =1;i<nbBloc-1;i++) {
+                for (int i =0;i<nbBloc-1;i++) {
                     if (((Agent)pile.get(i)).getAgentSuivant().value!=((Agent)pile.get(i)).value+1 ){
                         return false;
                     }

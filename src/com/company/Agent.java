@@ -15,7 +15,7 @@ public class Agent {
 
     public boolean seDeplacer(int X){
        // Si le bloc suivant n'est pas le bon, ou que le bloc précédent n'est pas le bon, et que l'on peut bouger
-        if ((getAgentSuivant().value!=value+1 || getAgentPrecedent().value!=value-1) && Objects.isNull(getAgentSuivant())){
+        if ((getAgentPrecedent() == null || getAgentPrecedent().value!=value-1)){
             moveBlocTo(X);
             return true;
         }
@@ -37,9 +37,9 @@ public class Agent {
             else {
                 Random rand = new Random();
                 int pileToGo = rand.nextInt(env.table.size());
-                while (env.table.get(pileToGo).peek()==this){
+                do{
                     pileToGo =  rand.nextInt(env.table.size());
-                }
+                }while(env.table.get(pileToGo).size() != 0 && env.table.get(pileToGo).peek()!=this);
                 moveBlocTo(pileToGo);
             }
 
@@ -82,7 +82,7 @@ public class Agent {
     public void moveBlocTo( int x)
     {
         for (Stack pile : env.table){
-            if (pile.peek()==this){
+            if (pile.size()>0 && pile.peek()==this){
                 env.table.get(x).add((Agent)pile.pop());
             }
         }
@@ -90,11 +90,12 @@ public class Agent {
 
     public void action(){
         Random rand = new Random();
-
-        boolean res = seDeplacer(rand.nextInt(3));
-        if (!res){
+        if (getAgentSuivant() ==null)
+            seDeplacer(rand.nextInt(3));
+        else
             pousser();
-        }
+
+
 
     }
 
