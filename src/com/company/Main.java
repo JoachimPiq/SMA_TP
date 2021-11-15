@@ -11,7 +11,7 @@ public class Main {
 
 
         int total = 0;
-        for (int i = 0; i<100; i++) {
+        for (int i = 0; i<1000; i++) {
             Environement env = new Environement(4);
             System.out.println(env);
             Random rand = new Random();
@@ -25,16 +25,18 @@ public class Main {
             while (!env.succes()) {
                 int nextAgent = rand.nextInt(4);
                 Agent agent = env.getAgent(listAgent.get(nextAgent));
+//                System.out.println(agent);
                 if (agent.action()) {
                     count++;
-
                 }
+//                System.out.println(env);
+
 
             }
             System.out.println("Fini en " + count);
             total+=count;
         }
 
-        System.out.println("Moyenne : "+ total/100);
+        System.out.println("Moyenne : "+ total/1000);
     }
 }

@@ -1,6 +1,5 @@
 package com.company;
 
-import java.util.Objects;
 import java.util.Random;
 import java.util.Stack;
 
@@ -13,37 +12,9 @@ public class Agent {
         this.env = env;
     }
 
-    public boolean seDeplacer(int X){
-        //Si le bloc précédent n'est pas le bon.
-        if ((getAgentPrecedent()!= null && value=='A') || (value!='A' && (getAgentPrecedent()==null || getAgentPrecedent().value!=value-1 )))
-        {
-            return tenterDeplacement(X);
-        }
-        //Si le bloc suivant n'est pas le bon
-        if((value=='C' && getAgentSuivant()!= null) || (value!='C' &&( getAgentSuivant()==null || getAgentSuivant().value!= value+1)))
-        {
-            return tenterDeplacement(X);
-        }
-        else
-        //Sinon l'objet est au bon endroit et on ne bouge pas
-        {
-            return false;
-        }
 
-    }
 
-    public void pousser(int x){
-
-            if (getAgentSuivant()!=null){
-                 getAgentSuivant().pousser(x);
-            }
-            else {
-                moveBlocTo(x);
-            }
-
-    }
-
-    public boolean tenterDeplacement(int x){
+    public boolean moveOrPush(int x){
         // Tente un déplacement, si pas possible parce que agent au dessus, transmet le déplacement et return false
         if (getAgentSuivant()==null) {
             moveBlocTo(x);
@@ -51,11 +22,12 @@ public class Agent {
         }
 
         else{
-            pousser(x);
+            getAgentSuivant().moveOrPush(x);
             return false;
 
         }
     }
+
     public Agent getAgentPrecedent(){
         //Retourne l'agent qui est en dessous de l'agent
         for (Stack pile : env.getTable()){
@@ -88,8 +60,6 @@ public class Agent {
         return null;
     }
 
-
-
     public boolean moveBlocTo( int x)
     {
         for (Stack pile : env.table){
@@ -105,11 +75,25 @@ public class Agent {
 
     public boolean action(){
         int pileToGo;
+        //On définit une pile ou aller pour l'agentn, qui ne soit pas celle sur lequel il est déjà.
         Random rand = new Random();
         do{
             pileToGo =  rand.nextInt(env.table.size());
         }while(env.table.get(pileToGo).contains(this));
-        return seDeplacer(pileToGo);
+
+        //Si la piece n'est pas au bonne endroit cad
+        //(La bloc est A est n'as pas de bloc en dessous
+        //OU le bloc n'est pas A et le bloc en dessous de lui est pas null et c'est la lettre précédente)
+        //ET
+        //(Le bloc est E est n'a pas de bloc au dessus
+        //OU le bloc n'est pas E et le bloc au dessus est pas null et c'est la lettre suivante')
+        if(!(((value=='A' && getAgentPrecedent() == null) || (value!='A' && getAgentPrecedent()!= null && getAgentPrecedent().value == value-1))&&((value=='E' && getAgentSuivant()==null)||(value!='E' && getAgentSuivant()!= null && getAgentSuivant().value== value+1))))
+        {
+            moveOrPush(pileToGo);
+            return true;
+        }
+
+        return false;
 
 
     }
