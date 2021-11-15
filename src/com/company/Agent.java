@@ -14,39 +14,50 @@ public class Agent {
     }
 
     public boolean seDeplacer(int X){
-       // Si le bloc suivant n'est pas le bon, ou que le bloc précédent n'est pas le bon, et que l'on peut bouger
-        if ((getAgentPrecedent() == null || getAgentPrecedent().value!=value-1)){
-            moveBlocTo(X);
-            return true;
-        }
-        else if ((getAgentSuivant() ==null || getAgentSuivant().value==value+1)
-                && (getAgentPrecedent().value==value-1 || getAgentPrecedent() == null))
+        //Si le bloc précédent n'est pas le bon.
+        if ((getAgentPrecedent()!= null && value=='A') || (value!='A' && (getAgentPrecedent()==null || getAgentPrecedent().value!=value-1 )))
         {
-            return true;
+            return tenterDeplacement(X);
         }
-        else {
+        //Si le bloc suivant n'est pas le bon
+        if((value=='C' && getAgentSuivant()!= null) || (value!='C' &&( getAgentSuivant()==null || getAgentSuivant().value!= value+1)))
+        {
+            return tenterDeplacement(X);
+        }
+        else
+        //Sinon l'objet est au bon endroit et on ne bouge pas
+        {
             return false;
         }
+
     }
 
-    public void pousser(){
+    public void pousser(int x){
 
             if (getAgentSuivant()!=null){
-                 getAgentSuivant().pousser();
+                 getAgentSuivant().pousser(x);
             }
             else {
-                Random rand = new Random();
-                int pileToGo = rand.nextInt(env.table.size());
-                do{
-                    pileToGo =  rand.nextInt(env.table.size());
-                }while(env.table.get(pileToGo).size() != 0 && env.table.get(pileToGo).peek()!=this);
-                moveBlocTo(pileToGo);
+                moveBlocTo(x);
             }
 
     }
 
+    public boolean tenterDeplacement(int x){
+        // Tente un déplacement, si pas possible parce que agent au dessus, transmet le déplacement et return false
+        if (getAgentSuivant()==null) {
+            moveBlocTo(x);
+            return true;
+        }
 
+        else{
+            pousser(x);
+            return false;
+
+        }
+    }
     public Agent getAgentPrecedent(){
+        //Retourne l'agent qui est en dessous de l'agent
         for (Stack pile : env.getTable()){
             if (pile.indexOf(this)!=-1){
                 try{
@@ -79,22 +90,26 @@ public class Agent {
 
 
 
-    public void moveBlocTo( int x)
+    public boolean moveBlocTo( int x)
     {
         for (Stack pile : env.table){
             if (pile.size()>0 && pile.peek()==this){
                 env.table.get(x).add((Agent)pile.pop());
+                return true;
             }
         }
+
+        System.out.println("Pas normal");
+        return false;
     }
 
-    public void action(){
+    public boolean action(){
+        int pileToGo;
         Random rand = new Random();
-        if (getAgentSuivant() ==null)
-            seDeplacer(rand.nextInt(3));
-        else
-            pousser();
-
+        do{
+            pileToGo =  rand.nextInt(env.table.size());
+        }while(env.table.get(pileToGo).contains(this));
+        return seDeplacer(pileToGo);
 
 
     }
