@@ -8,6 +8,7 @@ import java.util.Stack;
 public class Environement {
     public List<Stack<Agent>> table;
     public int nbBloc;
+    public int nbIteration;
 
     public Environement (int nbBloc)
     {
@@ -38,7 +39,11 @@ public class Environement {
 
     }
 
+    public int getPileAgent(Agent agent){
+        for (int i =0; i<3; i++) if (table.get(i).contains(agent)) return i;
+        return -1;
 
+    }
 
 
     public List<Stack<Agent>> getTable() {
@@ -53,6 +58,7 @@ public class Environement {
                         return false;
                     }
                 }
+                System.out.println("Nombre de mouvement pour arriver au succes : "+nbIteration);
                 return true;
             }
         }
@@ -72,11 +78,17 @@ public class Environement {
         return null;
     }
 
+    public void incMouvementCount(){nbIteration++;}
 
     @Override
     public String toString() {
-        return "Environement{" +
-                "table=" + table +
-                '}';
+        String res = "Environement ("+nbIteration+" itération):\n";
+        for (Stack pile : table){
+            for (Object agent : pile){
+                res += agent.toString()+" ";
+            }
+            res +="\n";
+        }
+        return res;
     }
 }
